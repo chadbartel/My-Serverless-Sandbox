@@ -1,0 +1,18 @@
+org: chadbartel
+app: my-first-serverless-test
+service: my-first-serverless-test
+
+frameworkVersion: '2'
+
+
+provider:
+        name: aws
+        runtime: python3.6
+        lambdaHashingVersion: 20201221
+        region: us-west-2
+
+
+functions:
+        mic_check:
+                handler: handler.mic_check
+
