@@ -1,0 +1,39 @@
+{
+  "data": [
+    {
+        "id": 0,
+        "name": "d4",
+        "sides": 4
+    },
+    {
+        "id": 1,
+        "name": "d6",
+        "sides": 6
+    },
+    {
+        "id": 2,
+        "name": "d8",
+        "sides": 8
+    },
+    {
+        "id": 3,
+        "name": "d10",
+        "sides": 10
+    },
+    {
+        "id": 4,
+        "name": "d12",
+        "sides": 12
+    },
+    {
+        "id": 5,
+        "name": "d20",
+        "sides": 20
+    },
+    {
+        "id": 6,
+        "name": "d100",
+        "sides": 10
+    }
+  ]
+}

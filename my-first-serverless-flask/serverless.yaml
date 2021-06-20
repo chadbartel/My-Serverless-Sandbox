@@ -1,0 +1,33 @@
+org: chadbartel
+app: my-first-serverless-flask
+service: my-first-serverless-flask
+
+frameworkVersion: '2'
+
+plugins:
+  - serverless-python-requirements
+  - serverless-wsgi
+custom:
+  wsgi:
+    app: app.app
+    packRequirements: false
+  pythonRequirements:
+    dockerizePip: true
+
+provider:
+  name: aws
+  region: us-west-2
+  runtime: python3.8
+  lambdaHashingVersion: '20201221'
+  stage: dev
+
+functions:
+  api:
+    handler: wsgi_handler.handler
+    events:
+      - http:
+          path: /
+          method: ANY
+      - http:
+          path: /{proxy+}
+          method: ANY
