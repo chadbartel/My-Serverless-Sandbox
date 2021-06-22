@@ -1,0 +1,20 @@
+{
+  "tags": [
+    {
+      "key": "Name",
+      "value": "([A-Za-z ])\\w+"
+    },
+    {
+      "key": "env",
+      "value": "^(dev|cert|prod){1}"
+    },
+    {
+      "key": "workspace",
+      "value": "([A-Za-z ])\\w+"
+    },
+    {
+      "key": "project",
+      "value": "([A-Za-z ])\\w+"
+    }
+  ]
+}
