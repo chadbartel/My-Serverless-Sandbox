@@ -7,7 +7,7 @@ from boto3.exceptions import UnauthorizeOperation
 
 # Setup logger
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 
 def describe_ec2_tags(**kwargs):
