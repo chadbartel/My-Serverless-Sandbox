@@ -21,3 +21,6 @@ functions:
     events:
       # Invoke Lambda function every 2nd minute from Mon-Fri
       - schedule: cron(0/2 * ? * MON-FRI *)
+
+plugins:
+  - serverless-python-requirements
