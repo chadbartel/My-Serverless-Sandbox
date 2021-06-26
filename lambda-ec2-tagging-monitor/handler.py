@@ -1,6 +1,7 @@
 # Import libraries
 import datetime
 import logging
+from classes.criteria import Criteria
 
 # Setup logger
 logger = logging.getLogger(__name__)
@@ -13,6 +14,7 @@ def run(event, context):
     logger.info("Your cron function " + name + " ran at " + str(current_time))
 
     # TODO: Load criteria
+    criteria = Criteria()
 
     # TODO: Get instances w/invalid criteria
  
