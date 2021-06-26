@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # Import libraries
 import datetime
 import logging
