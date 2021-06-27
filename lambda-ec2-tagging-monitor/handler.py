@@ -4,6 +4,7 @@
 import datetime
 import logging
 from classes.criteria import Criteria
+from classes.hunter import Hunter
 
 # Setup logger
 logger = logging.getLogger(__name__)
@@ -19,5 +20,6 @@ def run(event, context):
     criteria = Criteria()
 
     # TODO: Get instances w/invalid criteria
+    hunter = Hunter(criteria)
  
     # TODO: Terminate instances w/invalid criteria
