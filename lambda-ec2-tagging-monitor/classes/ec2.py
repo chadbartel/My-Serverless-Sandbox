@@ -4,14 +4,13 @@
 # Import libraries
 import boto3
 import logging
-from copy import copy
 
 # Setup logger
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 
-class EC2Client:
+class EC2:
 
     @classmethod
     def get_client(class, **kwargs):
@@ -19,3 +18,10 @@ class EC2Client:
         if 'region' not in kwargs:
             kwargs['region'] = 'us-west-2'
         return boto3.client('ec2', **kwargs)
+
+    @classmethod
+    def get_resource(class, **kwargs):
+        kwargs = {} if not kwargs else kwargs
+        if 'region' not in kwargs:
+            kwargs['region'] = 'us-west-2'
+        return boto3.resource('ec2', **kwargs)
