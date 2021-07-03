@@ -44,14 +44,29 @@ def get_client(region_name='us-west-2', profile_name=None, *args, **kwargs):
 
 
 ec2_client = get_client(profile_name=AWS_PROFILE)
-instance_response = ec2_client.describe_instances(
-    Filters = INSTANCE_FILTERS
-)
-tag_response = ec2_client.describe_tags(
-    Filters = TAG_FILTERS
-)
+instance_response = ec2_client.describe_instances(Filters=INSTANCE_FILTERS)
+running_instances = [
+    i['InstanceId'] for i in instance_response['Reservations'][0]['Instances']
+]
+tag_response = ec2_client.describe_tags(Filters=TAG_FILTERS)
+instance_tags = [
+    tag for tag in tag_response['Tags'] if tag['ResourceId'] in running_instances
+]
+
 print('Running instances:')
-print(json.dumps(instance_response, indent=4, default=default))
+print(
+    json.dumps(
+        running_instances,
+        indent=4,
+        default=default
+    )
+)
 print()
 print('Instance tags:')
-print(json.dumps(tag_response, indent=4, default=default))
+print(
+    json.dumps(
+        instance_tags,
+        indent=4,
+        default=default
+    )
+)
