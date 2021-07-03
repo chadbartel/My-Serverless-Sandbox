@@ -1,4 +1,5 @@
 #!/usr/bin/env python
 
-from aws import *
-from helpers import *
+import sys
+
+sys.path.append(".")
