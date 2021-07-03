@@ -5,6 +5,7 @@ import os
 import json
 import logging
 from pathlib import Path
+import datetime
 
 # Setup logger
 logger = logging.getLogger(__name__)
@@ -79,3 +80,9 @@ def get_criteria():
             with open(file) as f:
                 criteria = json.load(f)
     return criteria
+
+
+def default(o):
+    """Default datetime formatter for json."""
+    if isinstance(o, (datetime.date, datetime.datetime)):
+        return o.isoformat()
