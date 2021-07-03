@@ -3,8 +3,9 @@
 # Import libraries
 import datetime
 import logging
-from classes.criteria import Criteria
-from classes.hunter import Hunter
+from classes import EC2
+from classes import Criteria
+from classes import Hunter
 
 # Setup logger
 logger = logging.getLogger(__name__)
@@ -18,6 +19,9 @@ def run(event, context):
 
     # TODO: Load criteria
     criteria = Criteria()
+    
+    # TODO: Get EC2 client
+    ec2_client = EC2.get_client()
 
     # TODO: Get instances w/invalid criteria
     hunter = Hunter(criteria)
