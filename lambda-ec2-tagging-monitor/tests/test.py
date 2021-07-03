@@ -5,6 +5,7 @@ import datetime
 import json
 import boto3
 import logging
+from helpers import default
 
 
 # Setup logger
@@ -26,11 +27,6 @@ INSTANCE_FILTERS = [
         'Values': ['running']
     }
 ]
-
-
-def default(o):
-    if isinstance(o, (datetime.date, datetime.datetime)):
-        return o.isoformat()
 
 
 def get_client(region_name='us-west-2', profile_name=None, *args, **kwargs):
