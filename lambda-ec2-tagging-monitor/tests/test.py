@@ -14,11 +14,13 @@ logger.setLevel(logging.DEBUG)
 
 AWS_PROFILE = 'sso_poweruser'
 
-BASE_FILTERS = [
-    # {
-    #     'Name': 'resource-type',
-    #     'Values': ['instance']
-    # },
+TAG_FILTERS = [
+    {
+        'Name': 'resource-type',
+        'Values': ['instance']
+    }
+]
+INSTANCE_FILTERS = [
     {
         'Name': 'instance-state-name',
         'Values': ['running']
@@ -42,8 +44,14 @@ def get_client(region_name='us-west-2', profile_name=None, *args, **kwargs):
 
 
 ec2_client = get_client(profile_name=AWS_PROFILE)
-response = ec2_client.describe_instances(
-    Filters = BASE_FILTERS
+instance_response = ec2_client.describe_instances(
+    Filters = INSTANCE_FILTERS
 )
-print(json.dumps(response, indent=4, default=default))
-
+tag_response = ec2_client.describe_tags(
+    Filters = TAG_FILTERS
+)
+print('Running instances:')
+print(json.dumps(instance_response, indent=4, default=default))
+print()
+print('Instance tags:')
+print(json.dumps(tag_response, indent=4, default=default))
