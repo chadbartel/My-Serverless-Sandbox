@@ -1,11 +1,14 @@
 #!/usr/bin/env python
 
 # Import libraries
-import datetime
+import sys
 import json
 import boto3
 import logging
-from helpers import default
+
+sys.path.append(".")
+from helpers.helpers import default
+from classes.ec2 import EC2
 
 
 # Setup logger
@@ -41,9 +44,15 @@ def get_client(region_name='us-west-2', profile_name=None, *args, **kwargs):
 
 ec2_client = get_client(profile_name=AWS_PROFILE)
 instance_response = ec2_client.describe_instances(Filters=INSTANCE_FILTERS)
-running_instances = [
-    i['InstanceId'] for i in instance_response['Reservations'][0]['Instances']
-]
+try:
+    running_instances = [
+        i['InstanceId'] for i in instance_response['Reservations'][0]['Instances']
+    ]
+except IndexError as e:
+    running_instances = []
+    print(
+        f'No running instances found: {e}'
+    )
 tag_response = ec2_client.describe_tags(Filters=TAG_FILTERS)
 instance_tags = [
     tag for tag in tag_response['Tags'] if tag['ResourceId'] in running_instances
