@@ -13,15 +13,17 @@ logger.setLevel(logging.DEBUG)
 class EC2:
 
     @classmethod
-    def get_client(class, **kwargs):
+    def get_client(cls, *args, **kwargs):
+        args = [] if not args else args
         kwargs = {} if not kwargs else kwargs
         if 'region' not in kwargs:
             kwargs['region'] = 'us-west-2'
-        return boto3.client('ec2', **kwargs)
+        return boto3.client('ec2', *args, **kwargs)
 
     @classmethod
-    def get_resource(class, **kwargs):
+    def get_resource(cls, *args, **kwargs):
+        args = [] if not args else args
         kwargs = {} if not kwargs else kwargs
         if 'region' not in kwargs:
             kwargs['region'] = 'us-west-2'
-        return boto3.resource('ec2', **kwargs)
+        return boto3.resource('ec2', *args, **kwargs)

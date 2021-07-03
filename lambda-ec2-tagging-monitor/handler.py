@@ -23,3 +23,4 @@ def run(event, context):
     hunter = Hunter(criteria)
  
     # TODO: Terminate instances w/invalid criteria
+    hunter.terminate_invalid_instances()

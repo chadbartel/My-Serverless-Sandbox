@@ -16,7 +16,10 @@ logger.setLevel(logging.DEBUG)
 
 class Hunter:
 
-    def __init__(self, criteria:Criteria, **client_kwargs):
+    def _get_client(self, *args, **kwargs):
+        self._ec2_client = EC2.get_client(*args, **kwargs)
+
+    def __init__(self, criteria:Criteria, *client_args, **client_kwargs):
         self._base_filters = [
             {
                 'Name': 'instance-state-name',
@@ -27,11 +30,12 @@ class Hunter:
                 'Values': ['instance']
             }
         ]
-        self._client = EC2.get_client(**client_kwargs)
+        self._client = self._get_client(*client_args, **client_kwargs)
 
     # TODO: Get list of all active EC2 instances
     def find_all_instances(self):
-        pass
+        self._instances = []
+    
     
     # TODO: Identify any active EC2 instances with tags that violate criteria
     def violating_instances(self):
