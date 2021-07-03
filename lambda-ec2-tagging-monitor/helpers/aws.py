@@ -3,7 +3,6 @@
 # Import libraries
 import logging
 import boto3
-from boto3.exceptions import UnauthorizeOperation
 
 # Setup logger
 logger = logging.getLogger(__name__)
@@ -15,7 +14,7 @@ def describe_ec2_tags(**kwargs):
     
     try:
         _ = ec2_client.describe_tags(DryRun=True)
-    except UnauthorizeOperation as e:
+    except boto3.Exception as e:
         logger.error(
             f'Insufficient permissions to perform this action: {e}'
         )
