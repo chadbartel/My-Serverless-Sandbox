@@ -21,27 +21,12 @@ def run(event, context):
     
     # Get list of EC2 instances
     ec2 = EC2()
-    instances = ec2.list_instances()
-    if not instances:
-        logger.error(
-            'No running instances found'
-        )
-        sys.exit()
 
     # Load instance tag criteria
     criteria = Criteria()
 
     # TODO: Get instances w/invalid criteria
-    hunter = Hunter(criteria)
+    hunter = Hunter(criteria, ec2)
 
-    # Loop over list of instances
-    for i in instances:
-        # Get list of instance tags
-        tags = ec2.list_instance_tags()
-        
-        # Terminate instances without any tags
-        if not tags:
-            hunter.terminate_invalid_instances()
-        
-        # TODO: Terminate instances w/invalid criteria
-        hunter.terminate_invalid_instances()
+    # TODO: Terminate instances w/invalid criteria
+    hunter.terminate_invalid_instances()
