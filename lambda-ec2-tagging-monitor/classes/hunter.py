@@ -15,11 +15,14 @@ logger.setLevel(logging.DEBUG)
 
 class Hunter:
     
-    def __init__(self, criteria:Criteria):
-        self.criteria = criteria
-    
+    def __init__(self, criteria:Criteria, ec2:EC2):
+        self._criteria = criteria
+        self._ec2 = ec2
+
     # TODO: Identify instance tags that violate criteria
     def violating_instances(self):
         pass
     
-    # TODO: Terminate instance
+    # TODO: Terminate instance by id
+    def terminate_instance(self, instance_id:str):
+        pass
