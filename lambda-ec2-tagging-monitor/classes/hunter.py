@@ -3,7 +3,6 @@
 """Python class to search for EC2 instances by criteria."""
 # Import libraries
 import re
-import boto3
 import logging
 from copy import copy
 from classes import Criteria
@@ -16,8 +15,8 @@ logger.setLevel(logging.DEBUG)
 
 class Hunter:
     
-    def __init__(self):
-        pass
+    def __init__(self, criteria:Criteria):
+        self.criteria = criteria
 
     # TODO: Get list of all active EC2 instances
     def find_all_instances(self):
