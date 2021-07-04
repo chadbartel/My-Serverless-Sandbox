@@ -8,7 +8,7 @@ import logging
 
 sys.path.append(".")
 from helpers.helpers import default
-from classes.ec2 import EC2
+from classes import EC2
 
 
 # Setup logger
@@ -29,7 +29,13 @@ ec2 = EC2(profile_name=AWS_PROFILE)
 
 running_instances = ec2.list_instances()
 tag_response = ec2._client.describe_tags(Filters=TAG_FILTERS)
-instance_tags = ec2.list_instance_tags(instance_id=running_instances[0])
+try:
+    instance_tags = ec2.list_instance_tags(instance_id=running_instances[0])
+except IndexError as e:
+    print(
+        f'No running instances found: {e}'
+    )
+    instance_tags = []
 
 print('Running instances:')
 print(
