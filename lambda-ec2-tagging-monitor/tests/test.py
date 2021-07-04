@@ -7,7 +7,7 @@ import boto3
 import logging
 
 sys.path.append(".")
-from helpers.helpers import default
+from helpers import default
 from classes import EC2
 
 
