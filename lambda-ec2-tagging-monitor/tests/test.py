@@ -28,7 +28,6 @@ TAG_FILTERS = [
 ec2 = EC2(profile_name=AWS_PROFILE)
 
 running_instances = ec2.list_instances()
-tag_response = ec2._client.describe_tags(Filters=TAG_FILTERS)
 try:
     instance_tags = ec2.list_instance_tags(instance_id=running_instances[0])
 except IndexError as e:
