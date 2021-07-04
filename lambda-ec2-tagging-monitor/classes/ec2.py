@@ -49,6 +49,7 @@ class EC2:
         """Generate list of all EC2 instances based on filters."""
         # Set EC2 instance filters
         filters = DEFAULT_FILTERS if not filters else filters
+        instances = []
         
         # Check if we already have a response
         if not response:
@@ -63,7 +64,7 @@ class EC2:
 
         # Get instances from the response or return an empty list
         try:
-            instances = [
+            instances += [
                 i['Instances'][0]['InstanceId'] 
                 for i in response['Reservations']
             ]
@@ -71,11 +72,61 @@ class EC2:
             logger.error(
                 f'No running instances found: {e}'
             )
-            instances = []
             return instances
 
         # Check if there are any other instances
         if 'NextToken' not in response:
             return instances
         else:
-            return instances + self.get_running_instances()
+            return instances + self.get_running_instances(response=response, filters=filters)
+    
+    def list_instance_tags(self, response=None, instance_id:str=None):
+        """Generate list of all tags for a given instance id."""
+        # Set initial empty list of tags
+        tags = []
+
+        # Check if there was no instance id provided
+        if not instance_id:
+            logger.error(
+                f'Instance id not provided, returning empty list of tags'
+            )
+            return tags
+
+        # Create filter dictionary
+        filters = [
+            {
+                'Name': 'resource-type',
+                'Values': ['instance'],
+                'Name': 'resource-id',
+                'Values': [instance_id]
+            }
+        ]
+        
+        
+        # Check if we already have a response
+        if not response:
+            response = self._client.describe_tags(
+                Filters=filters
+            )
+        else:
+            response = self._client.describe_tags(
+                Filters=filters,
+                NextToken=response['NextToken']
+            )
+
+        # Get tags from the response or return an empty list
+        try:
+            tags += [
+                {tag['Key']:tag['Value']} for tag in response['Tags']
+            ]
+        except IndexError as e:
+            logger.error(
+                f'No running instances found: {e}'
+            )
+            return tags
+
+        # Check if there are any other tags
+        if 'NextToken' not in response:
+            return tags
+        else:
+            return tags + self.get_running_instances(response=response, filters=filters)
