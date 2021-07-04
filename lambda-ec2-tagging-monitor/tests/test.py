@@ -29,9 +29,7 @@ ec2 = EC2(profile_name=AWS_PROFILE)
 
 running_instances = ec2.list_instances()
 tag_response = ec2._client.describe_tags(Filters=TAG_FILTERS)
-instance_tags = [
-    tag for tag in tag_response['Tags'] if tag['ResourceId'] in running_instances
-]
+instance_tags = ec2.list_instance_tags(instance_id=running_instances[0])
 
 print('Running instances:')
 print(
