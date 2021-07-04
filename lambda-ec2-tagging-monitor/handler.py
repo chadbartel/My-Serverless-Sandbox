@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 
 # Import libraries
+import sys
 import datetime
 import logging
+
 from classes import EC2
 from classes import Criteria
 from classes import Hunter
