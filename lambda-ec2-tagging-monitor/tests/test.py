@@ -6,6 +6,7 @@ import json
 import logging
 
 sys.path.append('.')
+sys.path.append('..')
 from helpers import default
 from classes import EC2Client
 
@@ -25,14 +26,14 @@ TAG_FILTERS = [
 ]
 
 ec2 = EC2Client(profile_name=AWS_PROFILE)
+ec2.set_instances()
+ec2.set_instance_tags(instances=ec2.instances)
 
-running_instances = ec2.list_instances()
-instance_tags = ec2.list_tags(instance_ids=running_instances)
 
 print('Running instances:')
 print(
     json.dumps(
-        running_instances,
+        ec2.instances,
         indent=4,
         default=default
     )
@@ -41,7 +42,7 @@ print()
 print('Instance tags:')
 print(
     json.dumps(
-        instance_tags,
+        ec2.instance_tags,
         indent=4,
         default=default
     )
