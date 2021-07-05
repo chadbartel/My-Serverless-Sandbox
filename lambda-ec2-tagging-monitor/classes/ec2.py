@@ -2,9 +2,9 @@
 
 """Wrapper for AWS EC2Client client."""
 # Import libraries
-import boto3
 import logging
 from copy import copy
+from boto3.session import Session
 
 # Setup logger
 logger = logging.getLogger(__name__)
@@ -26,14 +26,44 @@ class EC2Client:
         kwargs = {} if not kwargs else kwargs
         if 'region_name' not in kwargs.keys():
             kwargs['region_name'] = 'us-west-2'
-        return boto3.session.Session(*args, **kwargs)
+        return Session(*args, **kwargs)
 
     @classmethod
-    def get_client(cls, session:boto3.session.Session=None, *args, **kwargs):
+    def get_client(cls, session:Session=None, *args, **kwargs):
         args = [] if not args else args
         kwargs = {} if not kwargs else kwargs
         session = EC2Client.get_session() if not session else session
         return session.client('ec2', *args, **kwargs)
+    
+    @property
+    def instances(self):
+        return copy(self._instances)
+    
+    @instances.setter
+    def instances(self, value):
+        self._instances = value
+    
+    @instances.deleter
+    def instances(self):
+        self._instances = []
+
+    def set_instances(self, *args, **kwargs):
+        self._instances = self.get_instances(*args, **kwargs)
+
+    @property
+    def instance_tags(self):
+        return copy(self._tags)
+    
+    @instance_tags.setter
+    def instance_tags(self, value):
+        self._tags = value
+    
+    @instance_tags.deleter
+    def instance_tags(self):
+        self._tags = []
+    
+    def set_instance_tags(self, *args, **kwargs):
+        self._tags = self.get_instance_tags(*args, **kwargs)
     
     def __init__(self, region_name:str=None, profile_name:str=None, *args, **kwargs):
         self._region_name = 'us-west-2' if not region_name else region_name
@@ -45,8 +75,10 @@ class EC2Client:
             profile_name=self._profile_name
         )
         self._client = EC2Client.get_client(self._session, *args, **kwargs)
+        self._instances = []
+        self._tags = []
     
-    def list_instances(self, client=None, response=None, filters:dict=None):
+    def get_instances(self, client:Session.client=None, response:dict=None, filters:dict=None):
         """Generate list of all EC2 instances based on filters."""
         # Set initial empty list of instances
         instances = []
@@ -97,7 +129,7 @@ class EC2Client:
                 filters=filters
             )
     
-    def list_tags(self, instance_ids:list, client=None, response=None):
+    def get_instance_tags(self, instance_ids:list, client:Session.client=None, response:dict=None):
         """Generate list of all tags for a given list of instances."""
         # Set initial empty list of tags
         tags = []
@@ -105,7 +137,7 @@ class EC2Client:
         # Check if passed an empty list of instance ids
         if not instance_ids:
             logger.error(
-                f'Instance ids not provided, returning empty tags'
+                f'No instance ids found in list, returning empty tags'
             )
             return tags
         else:
