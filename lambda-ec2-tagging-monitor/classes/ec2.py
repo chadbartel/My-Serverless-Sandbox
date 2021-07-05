@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
-"""Wrapper for AWS EC2 client."""
+"""Wrapper for AWS EC2Client client."""
 # Import libraries
 import boto3
 import logging
+from copy import copy
 
 # Setup logger
 logger = logging.getLogger(__name__)
@@ -17,7 +18,7 @@ DEFAULT_FILTERS = [
     }
 ]
 
-class EC2:
+class EC2Client:
 
     @classmethod
     def get_session(cls, *args, **kwargs):
@@ -31,7 +32,7 @@ class EC2:
     def get_client(cls, session:boto3.session.Session=None, *args, **kwargs):
         args = [] if not args else args
         kwargs = {} if not kwargs else kwargs
-        session = cls.get_session() if not session else session
+        session = EC2Client.get_session() if not session else session
         return session.client('ec2', *args, **kwargs)
     
     def __init__(self, region_name:str=None, profile_name:str=None, *args, **kwargs):
@@ -43,31 +44,43 @@ class EC2:
             region_name=self._region_name,
             profile_name=self._profile_name
         )
-        self._client = self.get_client(self._session, *args, **kwargs)
+        self._client = EC2Client.get_client(self._session, *args, **kwargs)
     
-    def list_instances(self, response=None, filters:dict=None):
+    def list_instances(self, client=None, response=None, filters:dict=None):
         """Generate list of all EC2 instances based on filters."""
+        # Set initial empty list of instances
+        instances = []
+
+        # Check if we have a client to use
+        if not client:
+            try:
+                client = self._client
+            except Exception as e:
+                logger.error(
+                    f'Client property not found: {e}'
+                )
+                self._client = EC2Client.get_client()
+                client = self._client
+        
         # Set EC2 instance filters
         filters = DEFAULT_FILTERS if not filters else filters
-        instances = []
         
         # Check if we already have a response
         if not response:
-            response = self._client.describe_instances(
+            response = client.describe_instances(
                 Filters=filters
             )
         else:
-            response = self._client.describe_instances(
+            response = client.describe_instances(
                 Filters=filters,
                 NextToken=response['NextToken']
             )
 
         # Get instances from the response or return an empty list
         try:
-            instances += [
-                i['Instances'][0]['InstanceId'] 
-                for i in response['Reservations']
-            ]
+            for r in response['Reservations']:
+                for i in r['Instances']:
+                    instances.append(i['InstanceId'])
         except IndexError as e:
             logger.error(
                 f'No running instances found: {e}'
@@ -78,55 +91,85 @@ class EC2:
         if 'NextToken' not in response:
             return instances
         else:
-            return instances + self.get_running_instances(response=response, filters=filters)
+            return instances + self.list_instances(
+                client=client, 
+                response=response, 
+                filters=filters
+            )
     
-    def list_instance_tags(self, response=None, instance_id:str=None):
-        """Generate list of all tags for a given instance id."""
+    def list_tags(self, instance_ids:list, client=None, response=None):
+        """Generate list of all tags for a given list of instances."""
         # Set initial empty list of tags
         tags = []
-
-        # Check if there was no instance id provided
-        if not instance_id:
+    
+        # Check if passed an empty list of instance ids
+        if not instance_ids:
             logger.error(
-                f'Instance id not provided, returning empty list of tags'
+                f'Instance ids not provided, returning empty tags'
             )
             return tags
-
-        # Create filter dictionary
-        filters = [
-            {
-                'Name': 'resource-type',
-                'Values': ['instance'],
-                'Name': 'resource-id',
-                'Values': [instance_id]
-            }
-        ]
-        
-        
-        # Check if we already have a response
-        if not response:
-            response = self._client.describe_tags(
-                Filters=filters
-            )
         else:
-            response = self._client.describe_tags(
-                Filters=filters,
-                NextToken=response['NextToken']
-            )
+            instance_ids = copy(instance_ids)
 
-        # Get tags from the response or return an empty list
-        try:
-            tags += [
-                {tag['Key']:tag['Value']} for tag in response['Tags']
+        # Check if we have a client to use
+        if not client:
+            try:
+                client = self._client
+            except Exception as e:
+                logger.error(
+                    f'Client property not found: {e}'
+                )
+                self._client = EC2Client.get_client()
+                client = self._client
+
+        while instance_ids:
+            # Get current instance from list
+            i = instance_ids.pop()
+
+            # Create filter dictionary
+            filters = [
+                {
+                    'Name': 'resource-type',
+                    'Values': ['instance'],
+                    'Name': 'resource-id',
+                    'Values': [i]
+                }
             ]
-        except IndexError as e:
-            logger.error(
-                f'No running instances found: {e}'
-            )
-            return tags
+            
+            # Check if we already have a response
+            if not response:
+                response = client.describe_tags(
+                    Filters=filters
+                )
+            elif 'NextToken' in response:
+                response = client.describe_tags(
+                    Filters=filters,
+                    NextToken=response['NextToken']
+                )
+            else:
+                response = copy(response)
+
+            # Get tags from the response or return an empty list
+            try:
+                tags.append(
+                    {i:[
+                        {tag['Key']:tag['Value']} for tag in response['Tags']
+                    ]}
+                )
+            except IndexError as e:
+                logger.error(
+                    f'No running instances found: {e}'
+                )
+                return tags
 
         # Check if there are any other tags
         if 'NextToken' not in response:
             return tags
         else:
-            return tags + self.get_running_instances(response=response, filters=filters)
+            return tags.update(
+                self.list_tags(
+                    instance_ids=instance_ids,
+                    client=client,
+                    response=response
+                )
+            )

@@ -2,5 +2,5 @@
 import sys
 sys.path.append(".")
 from classes.criteria import Criteria
-from classes.ec2 import EC2
+from classes.ec2 import EC2Client
 from classes.hunter import Hunter

@@ -6,7 +6,7 @@ import re
 import logging
 from copy import copy
 from classes import Criteria
-from classes import EC2
+from classes import EC2Client
 
 # Setup logger
 logger = logging.getLogger(__name__)
@@ -15,7 +15,7 @@ logger.setLevel(logging.DEBUG)
 
 class Hunter:
     
-    def __init__(self, criteria:Criteria, ec2:EC2):
+    def __init__(self, criteria:Criteria, ec2:EC2Client):
         self._criteria = criteria
         self._ec2 = ec2
 

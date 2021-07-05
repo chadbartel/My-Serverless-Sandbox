@@ -5,7 +5,7 @@ import sys
 import datetime
 import logging
 
-from classes import EC2
+from classes import EC2Client
 from classes import Criteria
 from classes import Hunter
 
@@ -19,8 +19,8 @@ def run(event, context):
     name = context.function_name
     logger.info("Your cron function " + name + " ran at " + str(current_time))
     
-    # Get list of EC2 instances
-    ec2 = EC2()
+    # Get EC2 client and list all running EC2 instances
+    ec2 = EC2Client()
 
     # Load instance tag criteria
     criteria = Criteria()

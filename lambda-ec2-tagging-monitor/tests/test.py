@@ -3,12 +3,11 @@
 # Import libraries
 import sys
 import json
-import boto3
 import logging
 
-sys.path.append(".")
+sys.path.append('.')
 from helpers import default
-from classes import EC2
+from classes import EC2Client
 
 
 # Setup logger
@@ -25,16 +24,10 @@ TAG_FILTERS = [
     }
 ]
 
-ec2 = EC2(profile_name=AWS_PROFILE)
+ec2 = EC2Client(profile_name=AWS_PROFILE)
 
 running_instances = ec2.list_instances()
-try:
-    instance_tags = ec2.list_instance_tags(instance_id=running_instances[0])
-except IndexError as e:
-    print(
-        f'No running instances found: {e}'
-    )
-    instance_tags = []
+instance_tags = ec2.list_tags(instance_ids=running_instances)
 
 print('Running instances:')
 print(
