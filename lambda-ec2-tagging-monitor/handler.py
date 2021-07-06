@@ -21,12 +21,14 @@ def run(event, context):
     
     # Get EC2 client and list all running EC2 instances
     ec2 = EC2Client()
+    ec2.set_instances()
+    ec2.set_instance_tags(instances=ec2.instances)
 
     # Load instance tag criteria
     criteria = Criteria()
 
     # TODO: Get instances w/invalid criteria
-    hunter = Hunter(criteria, ec2)
+    hunter = Hunter(criteria.criteria, ec2.instance_tags)
 
     # TODO: Terminate instances w/invalid criteria
     hunter.terminate_invalid_instances()
