@@ -171,7 +171,8 @@ class EC2Client:
         # Get tags from the response or return an empty list
         tags.append(
             {
-                i['InstanceId']: [
+                'InstanceId': i['InstanceId'],
+                'Tags': [
                     {
                         tag['Key']: tag['Value']
                     } for tag in response['Tags']
