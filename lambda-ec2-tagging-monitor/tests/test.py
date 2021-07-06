@@ -10,6 +10,10 @@ sys.path.append('..')
 from helpers import default
 from classes import EC2Client
 
+# Start logger
+for handler in logging.root.handlers[:]:
+    logging.root.removeHandler(handler)
+logging.basicConfig(level=logging.DEBUG, filename='tests/output.log', filemode='w')
 
 # Setup logger
 logger = logging.getLogger(__name__)
