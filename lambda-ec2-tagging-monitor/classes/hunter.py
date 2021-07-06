@@ -6,8 +6,6 @@ import sys
 import re
 import logging
 from copy import copy
-from classes import Criteria
-from classes import EC2Client
 
 # Setup logger
 logger = logging.getLogger(__name__)
