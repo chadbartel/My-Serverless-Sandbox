@@ -34,7 +34,7 @@ class Hunter:
     def invalid_instances(self) -> list:
         return copy(self._invalid_instances)
     
-    @property.setter
+    @invalid_instances.setter
     def invalid_instances(self, value:list):
         self._invalid_instances = value
     
