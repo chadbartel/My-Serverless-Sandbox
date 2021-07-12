@@ -30,6 +30,14 @@ class Hunter:
     def criteria(self, value:dict):
         self._criteria = value
     
+    @property
+    def invalid_instances(self) -> list:
+        return copy(self._invalid_instances)
+    
+    @property.setter
+    def invalid_instances(self, value:list):
+        self._invalid_instances = value
+    
     def __init__(self, criteria:dict, instance_tags:list):
         if not criteria or instance_tags:
             logger.error(
@@ -39,6 +47,7 @@ class Hunter:
         else:
             self._criteria = criteria
             self._instance_tags = instance_tags
+        self._invalid_instances = []
 
     # TODO: Identify instance tags that violate criteria
     def get_invalid_instances(self, instance_tags:list=None):
