@@ -4,6 +4,7 @@
 import sys
 import json
 import logging
+from copy import copy
 
 sys.path.append('.')
 sys.path.append('..')
@@ -29,25 +30,80 @@ TAG_FILTERS = [
     }
 ]
 
-ec2 = EC2Client(profile_name=AWS_PROFILE)
-ec2.set_instances()
-ec2.set_instance_tags(instances=ec2.instances)
+
+def test(profile:str=AWS_PROFILE, filters:dict=TAG_FILTERS, test_data=False):
+    if not test_data:
+        ec2 = EC2Client(profile_name=AWS_PROFILE)
+        ec2.set_instances()
+        ec2.set_instance_tags(instances=ec2.instances)
 
 
-print('Running instances:')
-print(
-    json.dumps(
-        ec2.instances,
-        indent=4,
-        default=default
-    )
-)
-print()
-print('Instance tags:')
-print(
-    json.dumps(
-        ec2.instance_tags,
-        indent=4,
-        default=default
-    )
-)
+        print('Running instances:')
+        print(
+            json.dumps(
+                ec2.instances,
+                indent=4,
+                default=default
+            )
+        )
+        print()
+        print('Instance tags:')
+        print(
+            json.dumps(
+                ec2.instance_tags,
+                indent=4,
+                default=default
+            )
+        )
+    else:
+        instances = []
+        with open(r'tests/test_instances.json', 'r') as f:
+            instance_response = json.loads(f.read())
+        try:
+            for r in instance_response['Reservations']:
+                for i in r['Instances']:
+                    instances.append({'InstanceId': i['InstanceId']})
+        except IndexError as e:
+            logger.error(
+                f'No running instances found: {e}'
+            )
+        print('Running instances:')
+        print(
+            json.dumps(
+                instances,
+                indent=4,
+                default=default
+            )
+        )
+        print()
+        tags = []
+        instance_ids = copy(instances)
+        with open(r'tests/test_instance_tags.json', 'r') as f:
+            tags_response = json.loads(f.read())
+        for i in instance_ids:
+            tags.append(
+                {
+                    'InstanceId': i['InstanceId'],
+                    'Tags': [
+                        {
+                            tag['Key']: tag['Value']
+                        } for tag in tags_response['Tags']
+                        if tag["ResourceId"] == i["InstanceId"]
+                    ]
+                }
+            )
+        print('Instance tags:')
+        print(
+            json.dumps(
+                tags,
+                indent=4,
+                default=default
+            )
+        )
+
+
+if __name__ == "__main__":
+    profile = AWS_PROFILE
+    filters = TAG_FILTERS
+    test_data = True
+    test(profile=profile, filters=filters, test_data=test_data)
