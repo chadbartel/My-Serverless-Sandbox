@@ -37,6 +37,9 @@ class Hunter:
     @invalid_instances.setter
     def invalid_instances(self, value:list):
         self._invalid_instances = value
+
+    def set_invalid_instances(self, *args, **kwargs):
+        self._invalid_instances = self.get_invalid_instances(*args, **kwargs)
     
     def __init__(self, criteria:dict, instance_tags:list):
         if not criteria or instance_tags:
@@ -52,7 +55,11 @@ class Hunter:
     # TODO: Identify instance tags that violate criteria
     def get_invalid_instances(self, instance_tags:list=None):
         instance_tags = self.instance_tags if not instance_tags else instance_tags
-        # for i in :
+        instances = []
+        if not instance_tags:
+            return instances
+        else:
+            pass
     
     # TODO: Terminate instance by id
     def terminate_instance(self, instance_id:str):
