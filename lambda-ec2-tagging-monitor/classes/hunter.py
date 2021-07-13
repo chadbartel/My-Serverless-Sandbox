@@ -58,27 +58,42 @@ class Hunter:
         instances = []
         if not instance_tags:
             return instances
-        else:
-            # There are three cases we need to consider:
-            #   1. There are no tags
-            #   2. Not all of the tag keys are present
-            #   3. All tag keys are present, values aren't valid
-            i = instance_tags.pop()
 
-            if not i["Tags"]:
-                instances.append(i["InstanceId"])
-            
-            tag_keys = list(
-                set().union(*(tag.keys() for tag in i["Tags"]))
+        # There are three cases we need to consider:
+        #   1. There are no tags
+        #   2. Not all of the tag keys are present
+        #   3. All tag keys are present, values aren't valid
+        i = instance_tags.pop()
+
+        if not i["Tags"]:
+            instances.append(i["InstanceId"])
+            return instances + self.get_invalid_instances(
+                instance_tags=instance_tags
             )
-            criteria_keys = list(
-                set().union(*(c.keys() for c in self._criteria.criteria))
-            )
-            
-            if set(tag_keys) != set(criteria_keys):
+        
+        tag_keys = list(
+            set().union(*(tag.keys() for tag in i["Tags"]))
+        )
+        tag_values = list(
+            set().union(*(tag.values() for tag in i["Tags"]))
+        )
+        criteria_keys = list(
+            set().union(*(c.keys() for c in self._criteria.criteria))
+        )
+        
+        if set(tag_keys) != set(criteria_keys):
+            instances.append(i["InstanceId"])
+        else:
+            matches = []
+            for k in criteria_keys:
+                pat = re.compile(self.criteria[k])
+                matches = matches + list(filter(pat.match, tag_values))
+            if len(matches) != len(criteria_keys):
                 instances.append(i["InstanceId"])
-            else:
-                pass
+
+        return instances + self.get_invalid_instances(
+            instance_tags=instance_tags
+        )
     
     # TODO: Terminate instance by id
     def terminate_instance(self, instance_id:str):
