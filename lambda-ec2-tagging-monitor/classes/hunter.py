@@ -24,7 +24,7 @@ class Hunter:
 
     @property
     def criteria(self) -> dict:
-        return copy(self._criteria)
+        return copy(self._criteria.criteria)
     
     @criteria.setter
     def criteria(self, value:dict):
