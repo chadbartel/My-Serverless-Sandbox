@@ -23,11 +23,11 @@ class Hunter:
         self._instance_tags = value
 
     @property
-    def criteria(self) -> dict:
-        return copy(self._criteria.criteria)
+    def criteria(self) -> list:
+        return copy(self._criteria)
     
     @criteria.setter
-    def criteria(self, value:dict):
+    def criteria(self, value:list):
         self._criteria = value
     
     @property
@@ -41,10 +41,15 @@ class Hunter:
     def set_invalid_instances(self, *args, **kwargs):
         self._invalid_instances = self.get_invalid_instances(*args, **kwargs)
     
-    def __init__(self, criteria:dict, instance_tags:list):
-        if not criteria or instance_tags:
+    def __init__(self, criteria:list, instance_tags:list):
+        if not criteria:
             logger.error(
-                f'Empty criteria and/or instance tags - exiting'
+                f'Empty criteria - exiting'
+            )
+            raise sys.exit()
+        elif not instance_tags:
+            logger.error(
+                f'Empty instance tags - exiting'
             )
             raise sys.exit()
         else:
