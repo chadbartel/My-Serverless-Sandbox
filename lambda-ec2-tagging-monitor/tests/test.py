@@ -45,6 +45,7 @@ TAG_FILTERS = [
 
 
 def test(profile:str=AWS_PROFILE, filters:dict=TAG_FILTERS, test_data=False):
+    criteria = Criteria()
     if not test_data:
         ec2 = EC2Client(profile_name=AWS_PROFILE)
         ec2.set_instances()
@@ -68,6 +69,13 @@ def test(profile:str=AWS_PROFILE, filters:dict=TAG_FILTERS, test_data=False):
                 default=default
             )
         )
+    
+        hunter = Hunter(
+            criteria=criteria.criteria['criteria'], 
+            instance_tags=ec2.instance_tags
+        )
+        hunter.set_invalid_instances()
+        print(hunter.invalid_instances)
     else:
         instances = []
         with open(r'tests/test_instances.json', 'r') as f:
@@ -114,7 +122,6 @@ def test(profile:str=AWS_PROFILE, filters:dict=TAG_FILTERS, test_data=False):
             )
         )
     
-        criteria = Criteria()
         hunter = Hunter(
             criteria=criteria.criteria['criteria'], 
             instance_tags=tags
