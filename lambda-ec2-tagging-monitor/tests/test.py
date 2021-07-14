@@ -1,15 +1,28 @@
 #!/usr/bin/env python
 
 # Import libraries
+import os
 import sys
 import json
 import logging
 from copy import copy
 
+# Update path
+sys.path.insert(
+    0, 
+    os.path.abspath(
+        os.path.join(
+            os.path.dirname(__file__), 
+            '..'
+        )
+    )
+)
 sys.path.append('.')
 sys.path.append('..')
 from helpers import default
 from classes import EC2Client
+from classes import Criteria
+from classes import Hunter
 
 # Start logger
 for handler in logging.root.handlers[:]:
@@ -100,6 +113,14 @@ def test(profile:str=AWS_PROFILE, filters:dict=TAG_FILTERS, test_data=False):
                 default=default
             )
         )
+    
+        criteria = Criteria()
+        hunter = Hunter(
+            criteria=criteria.criteria['criteria'], 
+            instance_tags=tags
+        )
+        hunter.set_invalid_instances()
+        print(hunter.invalid_instances)
 
 
 if __name__ == "__main__":
