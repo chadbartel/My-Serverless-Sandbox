@@ -1,7 +1,7 @@
 [
   {
     "key": "Name",
-    "value": "([A-Za-z ])\\w+"
+    "value": "(^.*$)"
   },
   {
     "key": "env",
@@ -9,10 +9,10 @@
   },
   {
     "key": "workspace",
-    "value": "([A-Za-z ])\\w+"
+    "value": "(^.*$)"
   },
   {
     "key": "project",
-    "value": "([A-Za-z ])\\w+"
+    "value": "(^.*$)"
   }
 ]
