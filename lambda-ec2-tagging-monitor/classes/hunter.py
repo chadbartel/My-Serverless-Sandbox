@@ -72,9 +72,12 @@ class Hunter:
 
         if not i["Tags"]:
             instances.append(i["InstanceId"])
-            return instances + self.get_invalid_instances(
-                instance_tags=instance_tags
-            )
+            if not instance_tags:
+                return instances
+            else:
+                return instances + self.get_invalid_instances(
+                    instance_tags=instance_tags
+                )
         
         tag_keys = list(
             set().union(*(tag.keys() for tag in i["Tags"]))
@@ -83,22 +86,25 @@ class Hunter:
             set().union(*(tag.values() for tag in i["Tags"]))
         )
         criteria_keys = list(
-            set().union(*(c.keys() for c in self._criteria.criteria))
+            set().union((c['key'] for c in self.criteria))
         )
         
         if set(tag_keys) != set(criteria_keys):
             instances.append(i["InstanceId"])
         else:
             matches = []
-            for k in criteria_keys:
-                pat = re.compile(self.criteria[k])
+            for c in self.criteria:
+                pat = re.compile(self.criteria[c['value']])
                 matches = matches + list(filter(pat.match, tag_values))
             if len(matches) != len(criteria_keys):
                 instances.append(i["InstanceId"])
 
-        return instances + self.get_invalid_instances(
-            instance_tags=instance_tags
-        )
+        if not instance_tags:
+            return instances
+        else:
+            return instances + self.get_invalid_instances(
+                instance_tags=instance_tags
+            )
     
     # TODO: Terminate instance by id
     def terminate_instance(self, instance_id:str):
