@@ -56,7 +56,7 @@ def test(profile:str=AWS_PROFILE, filters:dict=TAG_FILTERS, test_data=False):
         print(
             json.dumps(
                 ec2.instances,
-                indent=4,
+                indent=2,
                 default=default
             )
         )
@@ -65,7 +65,7 @@ def test(profile:str=AWS_PROFILE, filters:dict=TAG_FILTERS, test_data=False):
         print(
             json.dumps(
                 ec2.instance_tags,
-                indent=4,
+                indent=2,
                 default=default
             )
         )
@@ -92,7 +92,7 @@ def test(profile:str=AWS_PROFILE, filters:dict=TAG_FILTERS, test_data=False):
         print(
             json.dumps(
                 instances,
-                indent=4,
+                indent=2,
                 default=default
             )
         )
@@ -117,7 +117,7 @@ def test(profile:str=AWS_PROFILE, filters:dict=TAG_FILTERS, test_data=False):
         print(
             json.dumps(
                 tags,
-                indent=4,
+                indent=2,
                 default=default
             )
         )
