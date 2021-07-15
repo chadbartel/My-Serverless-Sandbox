@@ -74,6 +74,13 @@ def test(profile:str=AWS_PROFILE, filters:dict=TAG_FILTERS, test_data=False):
             criteria=criteria.criteria['criteria'], 
             instance_tags=ec2.instance_tags
         )
+        print(
+            json.dumps(
+                hunter.criteria,
+                indent=2,
+                default=default
+            )
+        )
         hunter.set_invalid_instances()
         print(hunter.invalid_instances)
     else:
@@ -125,6 +132,13 @@ def test(profile:str=AWS_PROFILE, filters:dict=TAG_FILTERS, test_data=False):
         hunter = Hunter(
             criteria=criteria.criteria['criteria'], 
             instance_tags=tags
+        )
+        print(
+            json.dumps(
+                hunter.criteria,
+                indent=2,
+                default=default
+            )
         )
         hunter.set_invalid_instances()
         print(hunter.invalid_instances)
