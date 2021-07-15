@@ -1,42 +1,40 @@
 {
   "Tags": [
-      {
-          "Key": "a",
-          "ResourceId": "i-01b0bdb9870d12eaa",
-          "ResourceType": "instance",
-          "Value": "1"
-      },
-      {
-          "Key": "b",
-          "ResourceId": "i-01b0bdb9870d12eaa",
-          "ResourceType": "instance",
-          "Value": "2"
-      },
-      {
-          "Key": "c",
-          "ResourceId": "i-055caa3248a65ab5f",
-          "ResourceType": "instance",
-          "Value": "3"
-      },
-      {
-          "Key": "d",
-          "ResourceId": "i-055caa3248a65ab5f",
-          "ResourceType": "instance",
-          "Value": "4"
-      }
-  ],
-  "ResponseMetadata": {
-      "RequestId": "bc05138f-71aa-4353-bc24-7faec474d38c",
-      "HTTPStatusCode": 200,
-      "HTTPHeaders": {
-          "x-amzn-requestid": "bc05138f-71aa-4353-bc24-7faec474d38c",
-          "cache-control": "no-cache, no-store",
-          "strict-transport-security": "max-age=31536000; includeSubDomains",
-          "content-type": "text/xml;charset=UTF-8",
-          "content-length": "993",
-          "date": "Tue, 06 Jul 2021 02:36:07 GMT",
-          "server": "AmazonEC2"
-      },
-      "RetryAttempts": 0
-  }
+    {
+      "Key": "a",
+      "ResourceId": "i-01b0bdb9870d12eaa",
+      "ResourceType": "instance",
+      "Value": "1"
+    },
+    {
+      "Key": "b",
+      "ResourceId": "i-01b0bdb9870d12eaa",
+      "ResourceType": "instance",
+      "Value": "2"
+    },
+    {
+      "Key": "Name",
+      "ResourceId": "i-055caa3248a65ab5f",
+      "ResourceType": "instance",
+      "Value": "my-ec2-instance-1"
+    },
+    {
+      "Key": "env",
+      "ResourceId": "i-055caa3248a65ab5f",
+      "ResourceType": "instance",
+      "Value": "dev"
+    },
+    {
+      "Key": "workspace",
+      "ResourceId": "i-055caa3248a65ab5f",
+      "ResourceType": "instance",
+      "Value": "default"
+    },
+    {
+      "Key": "project",
+      "ResourceId": "i-055caa3248a65ab5f",
+      "ResourceType": "instance",
+      "Value": "EC2 instance test"
+    }
+  ]
 }
