@@ -57,7 +57,7 @@ class Hunter:
             self._instance_tags = instance_tags
         self._invalid_instances = []
 
-    # TODO: Identify instance tags that violate criteria
+    # Identify instance tags that violate criteria
     def get_invalid_instances(self, instance_tags:list=None):
         instance_tags = self.instance_tags if not instance_tags else instance_tags
         instances = []
@@ -70,37 +70,53 @@ class Hunter:
         #   3. All tag keys are present, values aren't valid
         i = instance_tags.pop()
 
+        # Instance has no tags whatsoever
         if not i["Tags"]:
             instances.append(i["InstanceId"])
+            # No instance tags left to examine
             if not instance_tags:
                 return instances
+            # Recurse function with remaining instances
             else:
                 return instances + self.get_invalid_instances(
                     instance_tags=instance_tags
                 )
         
+        # Get list of tag keys
         tag_keys = list(
             set().union(*(tag.keys() for tag in i["Tags"]))
         )
-        tag_values = list(
-            set().union(*(tag.values() for tag in i["Tags"]))
-        )
+        # Get list of criteria keys
         criteria_keys = list(
             set().union((c['key'] for c in self.criteria))
         )
         
-        if set(tag_keys) != set(criteria_keys):
+        # There are not enough tags on the instance
+        if set(tag_keys) < set(criteria_keys):
             instances.append(i["InstanceId"])
         else:
+            # Set empty match result variable
             matches = []
+            # Go over all criteria
             for c in self.criteria:
-                pat = re.compile(self.criteria[c['value']])
-                matches = matches + list(filter(pat.match, tag_values))
+                # Compile regex pattern
+                pat = re.compile(c['value'])
+                # Get EC2 tag we need to apply the regex pattern
+                tag = list(
+                    filter(lambda x: c['key'] in x, i["Tags"])
+                )
+                match = pat.match(tag[0][c['key']])
+                # Append match to matches result variable
+                if match.group(0):
+                    matches.append(match.group(0))
+            # Length of matched tags is equal to length of criteria
             if len(matches) != len(criteria_keys):
                 instances.append(i["InstanceId"])
 
+        # No instance tags left to examine
         if not instance_tags:
             return instances
+        # Recurse function with remaining instances
         else:
             return instances + self.get_invalid_instances(
                 instance_tags=instance_tags
