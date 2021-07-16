@@ -4,6 +4,7 @@
 # Import libraries
 import logging
 from copy import copy
+from os import terminal_size
 from boto3.session import Session
 
 # Setup logger
@@ -190,16 +191,7 @@ class EC2Client:
     
     def terminate_instances(self, instance_ids:list, client:Session.client=None):
         # Set empty response variable
-        response = {}
-
-        # Check if empty list was passed
-        if not instance_ids or len(instance_ids) > 1000:
-            logger.error(
-                'No EC2 instance ids provided or more than 1000 ids provided'
-            )
-            return response
-        else:
-            instance_ids = copy(instance_ids)
+        responses = []
         
         # Check if we have a client to use
         if not client:
@@ -212,15 +204,37 @@ class EC2Client:
                 self._client = EC2Client.get_client()
                 client = self._client
         
-        try:
-            response.update(
+        # Copy list of instance ids
+        instance_ids = copy(instance_ids)
+
+        # Empty list was passed
+        if not instance_ids:
+            logger.info(
+                'No instances found in list'
+            )
+            return responses
+        # Only one element in list
+        elif len(instance_ids) == 1:
+            responses.append(
                 client.terminate_instances(
                     InstanceIds=instance_ids
                 )
             )
-        except Exception as e:
-            logger.error(
-                f'Unable to locate EC2 instance(s) by id \'{instance_ids}\': {e}'
-            )
+            return responses
+        # At least two instance id elements in list
         else:
-            return response
+            i = instance_ids.pop()
+            try:
+                responses.append(
+                    client.terminate_instances(
+                        InstanceIds=instance_ids
+                    )
+                )
+            except Exception as e:
+                logger.error(
+                    f'Unable to locate EC2 instance(s) by id \'{i}\': {e}'
+                )
+            return responses + self.terminate_instances(
+                instance_ids=instance_ids,
+                client=client
+            )
