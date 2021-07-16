@@ -188,7 +188,7 @@ class EC2Client:
             )
         return tags
     
-    def terminate_instance(self, instance_ids:list, client:Session.client=None):
+    def terminate_instances(self, instance_ids:list, client:Session.client=None):
         # Set empty response variable
         response = {}
 
