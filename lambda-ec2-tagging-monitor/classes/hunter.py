@@ -121,11 +121,3 @@ class Hunter:
             return instances + self.get_invalid_instances(
                 instance_tags=instance_tags
             )
-    
-    # TODO: Terminate instance by id
-    def terminate_instance(self, instance_id:str):
-        pass
-    
-    # TODO: Terminate instances that violate criteria
-    def terminate_invalid_instances(self, instance_ids:list):
-        pass
