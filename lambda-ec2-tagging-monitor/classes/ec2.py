@@ -187,3 +187,40 @@ class EC2Client:
                 client=client
             )
         return tags
+    
+    def terminate_instance(self, instance_ids:list, client:Session.client=None):
+        # Set empty response variable
+        response = {}
+
+        # Check if empty list was passed
+        if not instance_ids or len(instance_ids) > 1000:
+            logger.error(
+                'No EC2 instance ids provided or more than 1000 ids provided'
+            )
+            return response
+        else:
+            instance_ids = copy(instance_ids)
+        
+        # Check if we have a client to use
+        if not client:
+            try:
+                client = self._client
+            except Exception as e:
+                logger.error(
+                    f'Client property not found: {e}'
+                )
+                self._client = EC2Client.get_client()
+                client = self._client
+        
+        try:
+            response.update(
+                client.terminate_instances(
+                    InstanceIds=instance_ids
+                )
+            )
+        except Exception as e:
+            logger.error(
+                f'Unable to locate EC2 instance(s) by id \'{instance_ids}\': {e}'
+            )
+        else:
+            return response
