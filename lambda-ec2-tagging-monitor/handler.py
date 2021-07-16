@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 # Import libraries
-import sys
 import datetime
 import logging
 from copy import copy
