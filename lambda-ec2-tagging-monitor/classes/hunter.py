@@ -127,5 +127,5 @@ class Hunter:
         pass
     
     # TODO: Terminate instances that violate criteria
-    def terminate_invalid_instances(self, instances:list):
+    def terminate_invalid_instances(self, instance_ids:list):
         pass
