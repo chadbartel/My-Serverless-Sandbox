@@ -4,6 +4,7 @@
 import sys
 import datetime
 import logging
+from copy import copy
 
 from classes import EC2Client
 from classes import Criteria
@@ -27,8 +28,13 @@ def run(event, context):
     # Load instance tag criteria
     criteria = Criteria()
 
-    # TODO: Get instances w/invalid criteria
-    hunter = Hunter(criteria.criteria, ec2.instance_tags)
+    # Get instances w/invalid criteria
+    hunter = Hunter(
+        criteria=criteria.criteria['criteria'], 
+        instance_tags=ec2.instance_tags
+    )
+    hunter.set_invalid_instances()
 
-    # TODO: Terminate instances w/invalid criteria
-    hunter.terminate_invalid_instances()
+    # Terminate instances w/invalid criteria
+    instance_ids = copy(hunter.invalid_instances)
+    ec2.terminate_instances(instance_ids=instance_ids)
