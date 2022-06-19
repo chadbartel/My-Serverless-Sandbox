@@ -1,0 +1,5 @@
+[tool.poetry]
+name = "My Serverless Sandbox"
+version = "0.1"
+description = "My serverless sandbox"
+authors = ["Chad Bartel"]
